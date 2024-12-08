@@ -1,15 +1,12 @@
 const express = require("express");
+const auth = require("./controllers/authController")
 
 require("dotenv").config();
 
 const app = express();
-app.use(express.json());
 
-app.get("/", (req, res) => {
-    res.json({
-        msg: "hello world"
-    });
-});
+app.use(express.json());
+app.use("/auth", auth);
 
 function notFound(req, res, next) {
     res.status(404);

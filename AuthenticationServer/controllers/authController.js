@@ -1,8 +1,8 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const { getUserByEmail } = require("../services/userService");
+const {createJwtToken} = require("../services/jwtService")
 const router = express.Router();
-var jwt = require('jsonwebtoken');
 
 router.post("/login", async (req, res, next) => {
     var email = req.body.email;
@@ -30,10 +30,9 @@ router.post("/login", async (req, res, next) => {
         name:user.first_name,
         email:user.email,
     }
-
-    const options = { expiresIn: '1h' }; 
-    const token = jwt.sign(payload, process.env.JWT_KeySECRET_KEY, options);
+    var token = createJwtToken(payload)
     return res.status(200).json({token});
+
 });
 
 module.exports = router;
