@@ -1,12 +1,14 @@
 const express = require("express");
-const auth = require("./controllers/authController")
+const authController = require("./controllers/authController")
+const tokenController = require("./controllers/tokenController")
 
 require("dotenv").config();
 
 const app = express();
 
 app.use(express.json());
-app.use("/auth", auth);
+app.use("/auth", authController);
+app.use("/token", tokenController);
 
 function notFound(req, res, next) {
     res.status(404);
