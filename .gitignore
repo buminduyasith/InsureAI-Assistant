@@ -128,3 +128,39 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment directories
+env/
+venv/
+*.venv/
+__pycache__/
+.Python-version
+*.$(Python_version)
+
+# Jupyter notebook files
+.ipynb_checkpoints/
+
+# Testing directories (pytest)
+.tox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+
+# IDE specific files
+.idea/
+.vscode/
+*.suo
+*.user
+*.sln.docstate
+*.suo
+
+# Compiled Python files (Windows)
+*.pyo
+*.pyd
+*.pdb
