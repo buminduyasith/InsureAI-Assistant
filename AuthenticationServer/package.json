@@ -1,0 +1,15 @@
+{
+  "name": "authenticationserver",
+  "version": "1.0.0",
+  "description": "Purpose:",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon devstart"
+  },
+  "author": "bumindu",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
