@@ -4,12 +4,13 @@
   "description": "Purpose:",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon devstart"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "author": "bumindu",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "nodemon": "^3.1.7"
   }
 }
