@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const { getUserByEmail } = require("../services/userService");
 const router = express.Router();
+var jwt = require('jsonwebtoken');
 
 router.post("/login", async (req, res, next) => {
     var email = req.body.email;
@@ -24,7 +25,15 @@ router.post("/login", async (req, res, next) => {
         return  next(new Error("Invalid email or password."))
     }
 
-    return res.status(200).json({ message: 'You logged in successfully.' });
+    const payload = {
+        id:user.id,
+        name:user.first_name,
+        email:user.email,
+    }
+
+    const options = { expiresIn: '1h' }; 
+    const token = jwt.sign(payload, process.env.JWT_KeySECRET_KEY, options);
+    return res.status(200).json({token});
 });
 
 module.exports = router;
