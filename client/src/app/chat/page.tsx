@@ -1,6 +1,9 @@
 
 "use client"
 import React, { useState, ChangeEvent, KeyboardEvent } from "react";
+import axios from "axios";
+import LoadingModal from "../components/LoadingModal";
+
 interface Message {
     id: number;
     sender: "Agent" | "User";
@@ -17,19 +20,49 @@ const ChatApp: React.FC = () => {
     ]);
 
     const [newMessage, setNewMessage] = useState<string>("");
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
         setNewMessage(e.target.value);
     };
 
     const handleSendMessage = (): void => {
-        if (newMessage.trim() === "") return; // Prevent empty messages
+        if (newMessage.trim() === "") return;
         setMessages((prevMessages) => [
             ...prevMessages,
             { id: prevMessages.length + 1, sender: "User", text: newMessage },
         ]);
-        setNewMessage(""); // Clear the input after sending
+
+        setNewMessage(""); 
+        getAgentResponse();
     };
+
+    const getAgentResponse = async () : Promise<string | undefined> => {
+        try {
+            
+            setIsLoading(true)
+            const response = await axios.get('http://localhost:8000/chat', {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            console.log('Response data:', response.data.payload.output);
+    
+            setMessages((prevMessages) => [
+                ...prevMessages,
+                { id: prevMessages.length + 1, sender: "Agent", text: response.data.payload.output },
+            ]);
+    
+            return response.data;
+
+        } catch (error) {
+            alert(error)
+        }
+        finally{
+            setIsLoading(false)
+        }
+    }
 
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>): void => {
         if (e.key === "Enter") handleSendMessage();
@@ -37,11 +70,12 @@ const ChatApp: React.FC = () => {
 
     return (
         <div className="container my-3">
+            <LoadingModal isLoading={isLoading} message="" />
             <div className="card">
                 <div className="card-header text-center">
                     <h5>Chat</h5>
                 </div>
-                <div className="card-body" style={{ maxHeight: "400px", overflowY: "auto" }}>
+                <div className="card-body" style={{ maxHeight: "600px", overflowY: "auto" }}>
                     {messages.map((message) => (
                         <div
                             key={message.id}
