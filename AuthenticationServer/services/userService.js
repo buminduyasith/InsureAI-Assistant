@@ -10,7 +10,20 @@ async function getRoleByName(roleName) {
     return result.rows[0];
 }
 
+async function getUserRoleByUserId(userId) {
+    const query = `
+        SELECT r.name AS role_name
+        FROM users u
+        JOIN userroles ur ON u.id = ur.user_id
+        JOIN roles r ON ur.role_id = r.id
+        WHERE u.id = $1
+    `;
+
+    const result = await db.query(query, [userId]);
+    return result.rows[0];
+}
 module.exports = {
     getUserByEmail,
-    getRoleByName
+    getRoleByName,
+    getUserRoleByUserId
 };

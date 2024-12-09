@@ -1,6 +1,6 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
-const { getUserByEmail } = require("../services/userService");
+const { getUserByEmail, getUserRoleByUserId } = require("../services/userService");
 const {createJwtToken} = require("../services/jwtService")
 const router = express.Router();
 
@@ -25,10 +25,12 @@ router.post("/login", async (req, res, next) => {
         return  next(new Error("Invalid email or password."))
     }
 
+    var roledata = await getUserRoleByUserId(user.id);
     const payload = {
         id:user.id,
         name:user.first_name,
         email:user.email,
+        role: roledata.role_name
     }
     var token = createJwtToken(payload)
     return res.status(200).json({token});
