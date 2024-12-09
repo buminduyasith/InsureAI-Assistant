@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API_BASE_URL = "http://localhost:8081"; // Replace with your actual backend URL
 
-export const login = async (email, password) => {
+export const login = async (email: string, password: string) => {
     try {
         const response = await axios.post(`${API_BASE_URL}/auth/login`, {
             email,
@@ -15,7 +15,7 @@ export const login = async (email, password) => {
 };
 
 
-export const getUserClaims = async (email, password) => {
+export const getUserClaims = async () => {
     try {
         // Retrieve the token from localStorage
         var token = localStorage.getItem("authToken");
