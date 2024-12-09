@@ -12,11 +12,7 @@ interface Message {
 
 const ChatApp: React.FC = () => {
     const [messages, setMessages] = useState<Message[]>([
-        { id: 1, sender: "Agent", text: "Hello! How can I assist you today?" },
-        { id: 2, sender: "User", text: "I need help with my order." },
-        { id: 3, sender: "Agent", text: "Sure! Could you provide your order ID?" },
-        { id: 4, sender: "User", text: "It's 12345." },
-        { id: 5, sender: "Agent", text: "Thank you! Let me check that for you." },
+        { id: 1, sender: "Agent", text: "Hi there! I'm your AI-powered assistant for all things insurance-related. How can I help you today? Whether you need information on your policy, claim status, or anything else, just let me know!" },
     ]);
 
     const [newMessage, setNewMessage] = useState<string>("");
@@ -34,15 +30,17 @@ const ChatApp: React.FC = () => {
             { id: prevMessages.length + 1, sender: "User", text: newMessage },
         ]);
 
+        getAgentResponse(newMessage);
         setNewMessage(""); 
-        getAgentResponse();
     };
 
-    const getAgentResponse = async () : Promise<string | undefined> => {
+    const getAgentResponse = async (message: string) : Promise<string | undefined> => {
         try {
             
             setIsLoading(true)
-            const response = await axios.get('http://localhost:8000/chat', {
+            const response = await axios.post('http://localhost:8000/chat',{
+                message
+            } , {
                 headers: {
                     'Content-Type': 'application/json',
                 },

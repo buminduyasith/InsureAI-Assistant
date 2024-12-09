@@ -1,3 +1,4 @@
+from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 import os
 from langchain_openai import OpenAIEmbeddings
@@ -7,12 +8,14 @@ from langchain.agents import create_react_agent
 from langchain.agents import AgentExecutor
 from langchain import hub
 import requests
+from langchain import hub
+from langchain.prompts import PromptTemplate
+
 
 # os.environ['OPENAI_API_KEY'] = open_api_key
 
 # Initialize the ChatOpenAI model
 llm = ChatOpenAI(
-
     model="gpt-3.5-turbo",
     temperature=0
 )
@@ -32,11 +35,11 @@ def word_count(text: str) -> int:
 
 
 @tool
-def api_base_retrieval(text: str) -> str:
-    """If a particular user needs to get a claim details you can use this tool to continue you need claim id which is 5 digits number
-    if you didnt get a 4 digits number ask him to enter it again if user gave the 5 digits number you can use that as the claim id.
-    if we get the claim id this tool will send a request external api and give the claim detail as json
-
+def claim_base_retrieval(text: str) -> str:
+    """
+    If a particular user needs to retrieve claim details, you'll need the claim ID, which is a 5-digit number. If the user provides a 4-digit number,
+    ask them to enter it again. Once you have the 5-digit number, you can use it as the claim ID. This tool will then send a
+    request to an external API and return the claim details as a JSON response
     """
 
     numbers = [word for word in text.split() if word.isdigit()]
@@ -50,80 +53,72 @@ def api_base_retrieval(text: str) -> str:
             print("Response:", response.json())
             return response.json()
         except requests.exceptions.RequestException as e:
+            return "use didn't give the claim id should ask him to provide now"
             print("An error occurred:", e)
     else:
-        return "use didn't give the claim id should ask him to provide it to continue"
+        return "use didn't give the claim id should ask him to provide now"
+
+
+@tool
+def policy_base_retrieval(text: str) -> str:
+    """
+      You can use this tool if a user requests to check or retrieve their insurance policy details.
+      It will send a request to an external API and return the current policy details as a JSON response.
+      If needed, you may also use the knowledge_base_retrieval tool to gather more information about the user’s enrolled insurance policy.
+    """
+
+    userdId = "09cb0a5b-d34a-458e-84a9-cf1c7c8bc53e"
+    url = f"http://localhost:8082/policy?user_id={userdId}"
+    try:
+        response = requests.get(url, timeout=20)
+        response.raise_for_status()
+        print("Response:", response.json())
+        return response.json()
+    except requests.exceptions.RequestException as e:
+       return "api request failed can't get user insurance policy for the moment"
 
 
 @tool
 def knowledge_base_retrieval(text: str) -> int:
-    """You can use this when ever user ask regarding common insurance policy or claims stuff it might be the policy
-    list or can FAQ or something use this tool
+    """You can use this whenever a user asks about common insurance policies or claims. It could be related to policy lists, FAQs, claim limits more details, or similar information. Use this tool for that purpose.
     """
 
     data = """
-    [Insurance Company Name] - Car Insurance Policy
-        Policy Number: XYZ123456
-        Policy Holder: [Full Name] Policy Holder Address: [Address] Effective Date: [Start Date] 
-        Expiration Date: [End Date]
-        Coverage Details:
-        • Vehicle Covered: [Make, Model, Year]
-        • Coverage Type: Collision, Comprehensive, Liability, and Roadside Assistance
-        • Coverage Amount: $50,000 for collision damage, $10,000 for personal injury, $20,000 for 
-        property damage, and $5,000 for roadside assistance.
-        Premium Details:
-        • Premium Amount: $500.00 per year
-        • Payment Frequency: Annually
-        • Payment Due Date: [Due Date]
-        Exclusions:
-        • Loss or damage caused by the policyholder’s intentional actions.
-        • Loss or damage while the vehicle is being used for commercial purposes.
-        • Wear and tear, mechanical breakdowns, and regular maintenance are not covered.
-        Claims Procedure:
-        • In the event of an accident or damage, the policyholder must report the incident to 
-        [Insurance Company Name] immediately and provide details including date, time, location, 
-        and description of the accident.
-        • The policyholder must not admit fault or responsibility to any other party or insurance 
-        company.
-        • For a claim to be processed, the policyholder must submit photographs of the damage, an 
-        incident report, and a valid police report (if applicable).
-        • A claim form must be completed and submitted within 30 days of the incident.
-        Claim Limits:
-        • Maximum coverage for collision damage: $50,000
-        • Maximum coverage for property damage: $20,000
-        • Maximum coverage for personal injury: $10,000
-        • Maximum coverage for roadside assistance: $5,000
+    1. Standard Car Insurance Plan
+Name: Standard Car Insurance
+Details: This plan covers basic vehicle protection including liability, collision, and comprehensive coverage. It also provides roadside assistance, towing, and rental car reimbursement in case of an accident or breakdown.
+Claim Limit: $100,000 for liability claims, up to the actual cash value of the vehicle for collision and comprehensive coverage.
+2. Premium Auto Insurance Plan
+Name: Premium Auto Insurance
+Details: This plan offers extensive coverage for high-value vehicles. It includes all features of the standard plan along with coverage for custom parts and equipment, trip interruption, and a higher deductible waiver option. It also includes gap coverage in case of vehicle total loss.
+Claim Limit: $1,000,000 for liability claims, replacement cost coverage for collision and comprehensive, and additional coverage for custom parts up to $10,000.
+3. Luxury Car Insurance Plan
+Name: Luxury Car Insurance
+Details: This plan is tailored for high-end vehicles, providing premium protection against theft, vandalism, and accidents. It includes 24/7 roadside assistance, travel accident insurance, and coverage for luxury vehicles’ higher repair costs. It also offers discounts on OEM (Original Equipment Manufacturer) parts for repairs.
+Claim Limit: $2,000,000 for liability claims, up to the replacement cost of the vehicle, and additional coverage for customization and luxury features.
     """
 
     return data
 
 
-# List of tools for the agent
-tools = [knowledge_base_retrieval, api_base_retrieval]
+tools = [knowledge_base_retrieval, claim_base_retrieval, policy_base_retrieval ]
 
-def init():
+def init(msg):
     # Pull the prompt template from LangChainHub
     prompt = hub.pull("hwchase17/react")
     print(prompt)
-    agent = create_react_agent(tools=tools, llm=llm, prompt=prompt)
 
+    agent = create_react_agent(tools=tools, llm=llm, prompt= prompt)
     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, handle_parsing_errors=True)
-    # response = agent_executor.invoke(
-    #     {"input": "can you explain me the claim procedures and claim limits"})
 
     response = agent_executor.invoke(
-    {"input": "can you give me claim status my claim id is"})
-    print(response['output'])
-    return response
+        {
+            "input":msg,
+            "chat_history": [
+                SystemMessage(content="always start your reply by introduce you self say I am from abc company"),
+            ],
+        }
+    )
 
-init()
-# history
-# agent_executor.invoke(
-#     {
-#         "input": "what's my name? Don't use tools to look this up unless you NEED to",
-#         "chat_history": [
-#             HumanMessage(content="hi! my name is bob"),
-#             AIMessage(content="Hello Bob! How can I assist you today?"),
-#         ],
-#     }
-# )
+    print(response['input'])
+    return response

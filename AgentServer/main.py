@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse
 from asyncio import sleep
 from Agent import init
@@ -15,8 +15,10 @@ app.add_middleware(
 )
 
 
-@app.get("/chat")
-def read_root():
-    data = init()
-    return {"payload": data}
+@app.post("/chat")
+async def chat_endpoint(request: Request):
+    data = await request.json()  # Parse the JSON body
+    message = data.get("message")  # Extract the message from the body
+    payload = init(message)
+    return {"payload": payload}
 

@@ -14,12 +14,7 @@ router.post('/', (req, res) => {
         });
     }
 
-    const premium = {
-        policy_id,
-        current_premium: current_coverage * 0.05,
-        new_premium: new_coverage * 0.05,
-    };
-
+    
     return res.status(200).json(premium);
 });
 
