@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const policyDetails = [
-    { userId: "09cb0a5b-d34a-458e-84a9-cf1c7c8bc53e", policyName: "Gold Plan"},
+    { userId: "09cb0a5b-d34a-458e-84a9-cf1c7c8bc53e", policyName: "Premium Auto Insurance Plan"},
 ];
 
 router.get('/', (req, res) => {
