@@ -32,37 +32,31 @@ def word_count(text: str) -> int:
 
 
 @tool
-def random_user(text: str) -> str:
-    """Returns the random user."""
-    # URL for the dummy JSON API
-    print("getting user")
-    url = "https://dummyjson.com/users"
+def api_base_retrieval(text: str) -> str:
+    """If a particular user needs to get a claim details you can use this tool to continue you need claim id which is 5 digits number
+    if you didnt get a 4 digits number ask him to enter it again if user gave the 5 digits number you can use that as the claim id.
+    if we get the claim id this tool will send a request external api and give the claim detail as json
 
-    # Sending a GET request to the API
-    response = requests.get(url)
+    """
 
-    # Check if the request was successful (status code 200)
-    if response.status_code == 200:
-        # Parse the JSON data
-        data = response.json()
-
-        # Extract a random user from the users list F
-        if data['users']:
-            # You can randomly choose a user from the list or just pick the first one
-            user = data['users'][0]  # For the first user, you can change this logic if needed.
-
-            # Get the user's name (first and last name)
-            full_name = f"{user['firstName']} {user['lastName']}"
-
-            # Print the user's name
-            print(f"User Name: {full_name}")
-        else:
-            print("No users found in the response.")
+    numbers = [word for word in text.split() if word.isdigit()]
+    if numbers:
+        claimId = numbers[0]
+        print("Claim ID:", claimId)  # Output: Claim ID: 1456
+        url = f"http://localhost:8082/claims?claim_id={claimId}"
+        try:
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()  # Raise HTTPError for bad responses
+            print("Response:", response.json())
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            print("An error occurred:", e)
     else:
-        print(f"Error: Unable to fetch data. Status Code {response.status_code}")
+        return "use didn't give the claim id should ask him to provide it to continue"
+
 
 @tool
-def insurance_knowdldge(text: str) -> int:
+def knowledge_base_retrieval(text: str) -> int:
     """You can use this when ever user ask regarding common insurance policy or claims stuff it might be the policy
     list or can FAQ or something use this tool
     """
@@ -105,29 +99,24 @@ def insurance_knowdldge(text: str) -> int:
 
 
 # List of tools for the agent
-tools = [insurance_knowdldge]
+tools = [knowledge_base_retrieval, api_base_retrieval]
 
 def init():
     # Pull the prompt template from LangChainHub
     prompt = hub.pull("hwchase17/react")
-
     print(prompt)
-
-    # Create the agent using the LLM and the prompt template
     agent = create_react_agent(tools=tools, llm=llm, prompt=prompt)
 
-    # Initialize the agent executor with the created agent and tools
     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, handle_parsing_errors=True)
-
     # response = agent_executor.invoke(
-    #     {"input": "can you give generate random person name and give me the name and the word count in it"})
+    #     {"input": "can you explain me the claim procedures and claim limits"})
 
     response = agent_executor.invoke(
-        {"input": "can you explain me the claim procedures and claim limits"})
-
-    # print(response['output'])
+    {"input": "can you give me claim status my claim id is"})
+    print(response['output'])
     return response
 
+init()
 # history
 # agent_executor.invoke(
 #     {
