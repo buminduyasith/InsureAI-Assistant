@@ -37,4 +37,30 @@ def loadData():
     )
 
     vector_store.add_documents(splitsdocs)
+
+
+
+def getData():
+    query = "What is the Coverage Amount?"
+    openai_api_key = os.getenv('OPENAI_API_KEY')
+    embeddings = OpenAIEmbeddings(
+        openai_api_key=openai_api_key
+    )
+
+    connection = "postgresql+psycopg://langchain:langchain@localhost:6024/langchain"  # Uses psycopg3!
+    collection_name = "my_docs"
+
+    vector_store = PGVector(
+        embeddings=embeddings,
+        collection_name=collection_name,
+        connection=connection,
+        use_jsonb=True,
+    )
+    # Search the vector store
+    docs = vector_store.similarity_search(query, k=1)
+
+    # Print the relevant text
+    for doc in docs:
+        print(doc.page_content)
+
 loadData()
