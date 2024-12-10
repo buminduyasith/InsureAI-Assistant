@@ -17,8 +17,8 @@ app.add_middleware(
 
 @app.post("/chat")
 async def chat_endpoint(request: Request):
-    data = await request.json()  # Parse the JSON body
-    message = data.get("message")  # Extract the message from the body
+    data = await request.json()  
+    message = data.get("message")
     payload = init(message)
     return {"payload": payload}
 
