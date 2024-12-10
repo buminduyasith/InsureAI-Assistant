@@ -1,7 +1,7 @@
 from fastapi import FastAPI, File, UploadFile, Request
 from fastapi.responses import StreamingResponse, JSONResponse
 from asyncio import sleep
-from Agent import init
+from insurance_assistant import init
 from fastapi.middleware.cors import CORSMiddleware
 import os
 
