@@ -40,6 +40,16 @@ docker run --name pgvector-container \
   -d pgvector/pgvector:pg16
 ```
 
+### 2. Agent Server Setup
+```bash
+  pip install -r requirements.txt
+```
+### 3 Authentication Server, ClaimFlowAPI, Client Setup
+
+```bash
+  npm install
+```
+
 ## 🚀 Running the Application
 
 ```bash
