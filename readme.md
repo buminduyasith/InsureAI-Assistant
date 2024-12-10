@@ -17,11 +17,13 @@ The assistant can handle queries like:
 - "Can you provide detailed information regarding my insurance policy?"
 
 ## 🔧 Technology Stack
-
 - frontend: Nextjs
 - Backend: FastAPI, NodeJs
 - Database: PostgreSQL and PGVector
 - Language Model: Open AI models with langchain
+
+## System Design
+![AIAgent drawio (2)](https://github.com/user-attachments/assets/7a436ac3-b36f-4865-bfd9-d7882e253f18)
 
 ## 🛠 Installation
 
