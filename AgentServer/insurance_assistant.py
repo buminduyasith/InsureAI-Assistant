@@ -10,7 +10,7 @@ from langchain import hub
 import requests
 from langchain import hub
 from langchain.prompts import PromptTemplate
-
+from pdf_vector_pipeline import getData
 # Initialize the ChatOpenAI model
 llm = ChatOpenAI(
     model="gpt-3.5-turbo",
@@ -67,22 +67,7 @@ def policy_base_retrieval(text: str) -> str:
 def knowledge_base_retrieval(text: str) -> int:
     """You can use this whenever a user asks about common insurance policies or claims. It could be related to policy lists, FAQs, claim limits more details, or similar information. Use this tool for that purpose.
     """
-
-    data = """
-    1. Standard Car Insurance Plan
-Name: Standard Car Insurance
-Details: This plan covers basic vehicle protection including liability, collision, and comprehensive coverage. It also provides roadside assistance, towing, and rental car reimbursement in case of an accident or breakdown.
-Claim Limit: $100,000 for liability claims, up to the actual cash value of the vehicle for collision and comprehensive coverage.
-2. Premium Auto Insurance Plan
-Name: Premium Auto Insurance
-Details: This plan offers extensive coverage for high-value vehicles. It includes all features of the standard plan along with coverage for custom parts and equipment, trip interruption, and a higher deductible waiver option. It also includes gap coverage in case of vehicle total loss.
-Claim Limit: $1,000,000 for liability claims, replacement cost coverage for collision and comprehensive, and additional coverage for custom parts up to $10,000.
-3. Luxury Car Insurance Plan
-Name: Luxury Car Insurance
-Details: This plan is tailored for high-end vehicles, providing premium protection against theft, vandalism, and accidents. It includes 24/7 roadside assistance, travel accident insurance, and coverage for luxury vehicles’ higher repair costs. It also offers discounts on OEM (Original Equipment Manufacturer) parts for repairs.
-Claim Limit: $2,000,000 for liability claims, up to the replacement cost of the vehicle, and additional coverage for customization and luxury features.
-    """
-
+    data = getData(text)
     return data
 
 
@@ -92,7 +77,7 @@ def init(msg):
     prompt = hub.pull("hwchase17/react")
     print(prompt)
 
-    agent = create_react_agent(tools=tools, llm=llm, prompt= prompt)
+    agent = create_react_agent(tools=tools, llm=llm, prompt= prompt, stop_sequence=True)
     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, handle_parsing_errors=True)
 
     response = agent_executor.invoke(
