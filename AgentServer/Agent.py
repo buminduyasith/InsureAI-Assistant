@@ -27,13 +27,6 @@ embedding_model = OpenAIEmbeddings(model="text-embedding-3-small")
 #
 # docs = loader.load()
 
-
-@tool
-def word_count(text: str) -> int:
-    """Returns the word count."""
-    return len(text.split())
-
-
 @tool
 def claim_base_retrieval(text: str) -> str:
     """
@@ -49,12 +42,12 @@ def claim_base_retrieval(text: str) -> str:
         url = f"http://localhost:8082/claims?claim_id={claimId}"
         try:
             response = requests.get(url, timeout=10)
-            response.raise_for_status()  # Raise HTTPError for bad responses
+            response.raise_for_status() 
             print("Response:", response.json())
             return response.json()
         except requests.exceptions.RequestException as e:
-            return "use didn't give the claim id should ask him to provide now"
             print("An error occurred:", e)
+            return "use didn't give the claim id should ask him to provide now"
     else:
         return "use didn't give the claim id should ask him to provide now"
 
@@ -104,7 +97,6 @@ Claim Limit: $2,000,000 for liability claims, up to the replacement cost of the 
 tools = [knowledge_base_retrieval, claim_base_retrieval, policy_base_retrieval ]
 
 def init(msg):
-    # Pull the prompt template from LangChainHub
     prompt = hub.pull("hwchase17/react")
     print(prompt)
 
@@ -115,7 +107,7 @@ def init(msg):
         {
             "input":msg,
             "chat_history": [
-                SystemMessage(content="always start your reply by introduce you self say I am from abc company"),
+                SystemMessage(content="You are an AI agent specialized in assisting users with insurance-related questions"),
             ],
         }
     )

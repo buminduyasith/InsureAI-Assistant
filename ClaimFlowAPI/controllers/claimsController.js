@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const claims = [
-    { claim_id: '98765', status: 'In Review', last_updated: '2024-12-01' },
+    { claim_id: '98765', status: 'In Review', last_updated: '2024-12-10' },
 ];
 
 router.get('/', (req, res) => {

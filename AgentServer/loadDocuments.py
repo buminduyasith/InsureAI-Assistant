@@ -21,7 +21,6 @@ def loadData():
     
     splitsdocs = text_splitter.split_documents(documents)
     
-    # Create embeddings
     embeddings = OpenAIEmbeddings(
         openai_api_key = openai_api_key
     )
@@ -40,8 +39,7 @@ def loadData():
 
 
 
-def getData():
-    query = "What is the Coverage Amount?"
+def getData(query):
     openai_api_key = os.getenv('OPENAI_API_KEY')
     embeddings = OpenAIEmbeddings(
         openai_api_key=openai_api_key
@@ -56,10 +54,8 @@ def getData():
         connection=connection,
         use_jsonb=True,
     )
-    # Search the vector store
-    docs = vector_store.similarity_search(query, k=1)
+    docs = vector_store.similarity_search(query, k=5)
 
-    # Print the relevant text
     for doc in docs:
         print(doc.page_content)
 

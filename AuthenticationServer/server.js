@@ -9,16 +9,13 @@ require("dotenv").config();
 const app = express();
 
 app.use(cors({
-    origin: "http://localhost:3000", // Allow requests from port 3000
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], // Allow these HTTP methods
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
 }));
 
 app.use(express.json());
 
-app.get("/", async (req, res) => {
-    var hash = await bcrypt.hashSync("egege@eE23", 10)
-    res.status(200).json({hash});
-})
+
 app.use("/auth", authController);
 app.use("/token", tokenController);
 

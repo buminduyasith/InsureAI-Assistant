@@ -1,5 +1,5 @@
 const express = require("express");
-const {createJwtToken, verifyJwtToken} = require("../services/jwtService")
+const {verifyJwtToken} = require("../services/jwtService")
 const router = express.Router();
 
 router.get('/introspect', (req, res) => {
