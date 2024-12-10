@@ -1,19 +1,26 @@
 "use client"
 import { useState } from "react";
-import { login } from "@/app/services/authService";
+import { login, getUserClaims } from "@/app/services/authService";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-
+    const router = useRouter();
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             setError(""); 
-            const data = await login(email, password);
-            console.log("Login successful", data);
-        } catch (err) {
+            await login(email, password);
+            const resposne = await getUserClaims()
+            if(resposne.claims.role == "Admin"){
+                router.push("/dashboard");
+            }
+            else{
+                router.push("/chat");
+            }
+        } catch (err:any) {
             setError(err.message || "An error occurred");
         }
     };
