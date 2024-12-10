@@ -18,9 +18,10 @@ The assistant can handle queries like:
 
 ## 🔧 Technology Stack
 
-- Language Model: Open AI models with langchain
+- frontend: Nextjs
 - Backend: FastAPI, NodeJs
-- Database: PostgreSQL with PGVector
+- Database: PostgreSQL and PGVector
+- Language Model: Open AI models with langchain
 
 ## 🛠 Installation
 
