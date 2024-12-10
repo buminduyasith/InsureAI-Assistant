@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:8081";
+const API_BASE_URL = process.env.NEXT_PUBLIC_AUTH_URL
 export const login = async (email: string, password: string) : Promise<any> => {
     try {
         const response = await axios.post(`${API_BASE_URL}/auth/login`, {

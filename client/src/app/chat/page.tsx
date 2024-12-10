@@ -39,7 +39,7 @@ const ChatApp: React.FC = () => {
         try {
 
             setIsLoading(true)
-            const response = await axios.post('http://localhost:8000/chat', {
+            const response = await axios.post(process.env.NEXT_PUBLIC_AGENT_URL, {
                 message
             }, {
                 headers: {

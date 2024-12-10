@@ -1,0 +1,6 @@
+OPENAI_API_KEY=TEST
+DB_USER=langchain
+DB_HOST=localhost
+DB_NAME=Identity 
+DB_PASSWORD=langchain 
+DB_PORT=6024

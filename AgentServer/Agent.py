@@ -11,9 +11,6 @@ import requests
 from langchain import hub
 from langchain.prompts import PromptTemplate
 
-
-# os.environ['OPENAI_API_KEY'] = open_api_key
-
 # Initialize the ChatOpenAI model
 llm = ChatOpenAI(
     model="gpt-3.5-turbo",
@@ -21,11 +18,6 @@ llm = ChatOpenAI(
 )
 
 embedding_model = OpenAIEmbeddings(model="text-embedding-3-small")
-
-# # Load the PDF document
-# loader = PyPDFLoader("test2.pdf")
-#
-# docs = loader.load()
 
 @tool
 def claim_base_retrieval(text: str) -> str:
