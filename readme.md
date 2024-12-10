@@ -43,11 +43,16 @@ docker run --name pgvector-container \
 ### 2. Agent Server Setup
 ```bash
   pip install -r requirements.txt
+
+  create a .env file based on the "envcopy"
+
 ```
 ### 3 Authentication Server, ClaimFlowAPI, Client Setup
 
 ```bash
   npm install
+  
+  create a .env file based on the "envcopy"
 ```
 
 ## 🚀 Running the Application
