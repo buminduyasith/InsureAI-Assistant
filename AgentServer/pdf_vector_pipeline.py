@@ -10,7 +10,7 @@ load_dotenv()
 def loadData():
 
     openai_api_key = os.getenv('OPENAI_API_KEY')
-    loader = PyPDFLoader(file_path="test.pdf")
+    loader = PyPDFLoader(file_path="sample.pdf")
     documents = loader.load()
 
     text_splitter = RecursiveCharacterTextSplitter(
@@ -36,6 +36,7 @@ def loadData():
     )
 
     vector_store.add_documents(splitsdocs)
+    print("done")
 
 
 
@@ -54,9 +55,8 @@ def getData(query):
         connection=connection,
         use_jsonb=True,
     )
-    docs = vector_store.similarity_search(query, k=5)
+    docs = vector_store.similarity_search(query, k=2, )
 
-    for doc in docs:
-        print(doc.page_content)
+    return docs
 
-loadData()
+getData("can you give me more details regarding the Premium Auto Insurance Plan")
